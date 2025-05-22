@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mental Health Tracker</title>
+  <style>
+    /* App Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e7f0f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      margin-top: 50px;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0066cc;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004c99;
+    }
+
+    .log-entry {
+      margin-top: 20px;
+      padding: 10px;
+      border-left: 4px solid #4caf50;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mental Health Tracker</h1>
+
+    <!-- Mood Selection -->
+    <label for="mood">Today's Mood:</label>
+    <select id="mood">
+      <option value="😊 Happy">😊 Happy</option>
+      <option value="😐 Neutral">😐 Neutral</option>
+      <option value="😔 Sad">😔 Sad</option>
+      <option value="😠 Angry">😠 Angry</option>
+      <option value="😰 Anxious">😰 Anxious</option>
+    </select>
+
+    <!-- Journal Entry -->
+    <label for="journal">Write something about your day:</label>
+    <textarea id="journal" rows="5" placeholder="What's on your mind?"></textarea>
+
+    <!-- Save Button -->
+    <button onclick="saveEntry()">Save Entry</button>
+
+    <!-- Log Display -->
+    <div id="logContainer"></div>
+  </div>
+
+  <script>
+    /**
+     * saveEntry - Saves the user's mood and journal entry to localStorage and updates the display
+     */
+    function saveEntry() {
+      const mood = document.getElementById("mood").value;
+      const journal = document.getElementById("journal").value.trim();
+      const date = new Date().toLocaleDateString();
+
+      if (!journal) {
+        alert("Please write something before saving.");
+        return;
+      }
+
+      const entry = { date, mood, journal };
+      let logs = JSON.parse(localStorage.getItem("logs")) || [];
+      logs.push(entry);
+      localStorage.setItem("logs", JSON.stringify(logs));
+
+      document.getElementById("journal").value = ""; // Clear journal input
+      renderLogs();
+    }
+
+    /**
+     * renderLogs - Displays all saved log entries from localStorage
+     */
+    function renderLogs() {
+      const logs = JSON.parse(localStorage.getItem("logs")) || [];
+      const logContainer = document.getElementById("logContainer");
+      logContainer.innerHTML = "<h3>Your Log</h3>";
+
+      logs.slice().reverse().forEach(log => {
+        const div = document.createElement("div");
+        div.className = "log-entry";
+        div.innerHTML = `
+          <strong>${log.date}</strong> - ${log.mood}<br/>
+          <p>${log.journal}</p>
+        `;
+        logContainer.appendChild(div);
+      });
+    }
+
+    // Render logs when the page loads
+    renderLogs();
+  </script>
+</body>
+</html>
